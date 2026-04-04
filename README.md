@@ -63,6 +63,7 @@ gcc main.c -o project
 ---
 
 ## 🧾 Sample Output
+<img width="354" height="205" alt="image" src="https://github.com/user-attachments/assets/4c968e8d-4362-4cf3-8946-f2a69c2e4f2a" />
 
 
 
