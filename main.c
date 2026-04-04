@@ -2,108 +2,113 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Structure
-struct Student {
+#define MAX 50
+
+// Structure for Surgery Node
+typedef struct Surgery {
     int id;
     char name[50];
-    float marks;
-    struct Student* next;
-};
+    int duration;
+    struct Surgery* next;
+} Surgery;
 
-// Head pointer
-struct Student* head = NULL;
+// Adjacency matrix for DAG
+int graph[MAX][MAX] = {0};
 
-// CREATE - Add node
-void addStudent() {
-    struct Student* newNode = (struct Student*)malloc(sizeof(struct Student));
+// List head
+Surgery* head = NULL;
+int count = 0;
 
-    printf("Enter ID: ");
+// CREATE - Add surgery
+void addSurgery() {
+    Surgery* newNode = (Surgery*)malloc(sizeof(Surgery));
+
+    printf("Enter Surgery ID: ");
     scanf("%d", &newNode->id);
 
-    printf("Enter Name: ");
+    printf("Enter Surgery Name: ");
     scanf(" %[^\n]", newNode->name);
 
-    printf("Enter Marks: ");
-    scanf("%f", &newNode->marks);
+    printf("Enter Duration (mins): ");
+    scanf("%d", &newNode->duration);
 
     newNode->next = NULL;
 
     if (head == NULL) {
         head = newNode;
     } else {
-        struct Student* temp = head;
-        while (temp->next != NULL) {
+        Surgery* temp = head;
+        while (temp->next != NULL)
             temp = temp->next;
-        }
         temp->next = newNode;
     }
 
-    printf("✅ Student added successfully!\n");
+    count++;
+    printf("✅ Surgery added!\n");
 }
 
-// READ - Display
-void displayStudents() {
+// READ - Display surgeries
+void displaySurgeries() {
     if (head == NULL) {
-        printf("No records found.\n");
+        printf("No surgeries scheduled.\n");
         return;
     }
 
-    struct Student* temp = head;
-    printf("\n--- Student Records ---\n");
+    Surgery* temp = head;
+    printf("\n--- Surgery List ---\n");
 
     while (temp != NULL) {
-        printf("ID: %d | Name: %s | Marks: %.2f\n",
-               temp->id, temp->name, temp->marks);
+        printf("ID: %d | Name: %s | Duration: %d mins\n",
+               temp->id, temp->name, temp->duration);
         temp = temp->next;
     }
 }
 
 // SEARCH
-struct Student* searchStudent(int id) {
-    struct Student* temp = head;
+Surgery* searchSurgery(int id) {
+    Surgery* temp = head;
     while (temp != NULL) {
-        if (temp->id == id) {
+        if (temp->id == id)
             return temp;
-        }
         temp = temp->next;
     }
     return NULL;
 }
 
 // UPDATE
-void updateStudent() {
+void updateSurgery() {
     int id;
-    printf("Enter ID to update: ");
+    printf("Enter Surgery ID to update: ");
     scanf("%d", &id);
 
-    struct Student* student = searchStudent(id);
+    Surgery* s = searchSurgery(id);
 
-    if (student == NULL) {
-        printf("❌ Student not found.\n");
+    if (s == NULL) {
+        printf("❌ Not found\n");
         return;
     }
 
     printf("Enter new name: ");
-    scanf(" %[^\n]", student->name);
+    scanf(" %[^\n]", s->name);
 
-    printf("Enter new marks: ");
-    scanf("%f", &student->marks);
+    printf("Enter new duration: ");
+    scanf("%d", &s->duration);
 
-    printf("✅ Record updated successfully!\n");
+    printf("✅ Updated successfully\n");
 }
 
 // DELETE
-void deleteStudent() {
+void deleteSurgery() {
     int id;
-    printf("Enter ID to delete: ");
+    printf("Enter Surgery ID to delete: ");
     scanf("%d", &id);
 
-    struct Student *temp = head, *prev = NULL;
+    Surgery *temp = head, *prev = NULL;
 
     if (temp != NULL && temp->id == id) {
         head = temp->next;
         free(temp);
-        printf("✅ Student deleted.\n");
+        printf("✅ Deleted\n");
         return;
     }
 
@@ -113,13 +118,77 @@ void deleteStudent() {
     }
 
     if (temp == NULL) {
-        printf("❌ Student not found.\n");
+        printf("❌ Not found\n");
         return;
     }
 
     prev->next = temp->next;
     free(temp);
-    printf("✅ Student deleted.\n");
+    printf("✅ Deleted\n");
+}
+
+// ADD DEPENDENCY (EDGE)
+void addDependency() {
+    int u, v;
+    printf("Enter prerequisite surgery ID: ");
+    scanf("%d", &u);
+
+    printf("Enter dependent surgery ID: ");
+    scanf("%d", &v);
+
+    if (u >= MAX || v >= MAX) {
+        printf("Invalid IDs\n");
+        return;
+    }
+
+    graph[u][v] = 1;
+    printf("✅ Dependency added: %d -> %d\n", u, v);
+}
+
+// DISPLAY GRAPH
+void displayGraph() {
+    printf("\n--- Adjacency Matrix ---\n");
+
+    for (int i = 0; i < count; i++) {
+        for (int j = 0; j < count; j++) {
+            printf("%d ", graph[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// TOPOLOGICAL SORT (Scheduling Order)
+int visited[MAX] = {0};
+int stack[MAX], top = -1;
+
+void dfs(int v) {
+    visited[v] = 1;
+
+    for (int i = 0; i < count; i++) {
+        if (graph[v][i] && !visited[i]) {
+            dfs(i);
+        }
+    }
+
+    stack[++top] = v;
+}
+
+void topologicalSort() {
+    for (int i = 0; i < count; i++)
+        visited[i] = 0;
+
+    top = -1;
+
+    for (int i = 0; i < count; i++) {
+        if (!visited[i])
+            dfs(i);
+    }
+
+    printf("\n--- Surgery Schedule Order ---\n");
+    while (top != -1) {
+        printf("%d ", stack[top--]);
+    }
+    printf("\n");
 }
 
 // MENU
@@ -127,38 +196,44 @@ void menu() {
     int choice;
 
     do {
-        printf("\n===== MENU =====\n");
-        printf("1. Add Student\n");
-        printf("2. Delete Student\n");
-        printf("3. Update Student\n");
-        printf("4. Search Student\n");
-        printf("5. Display Students\n");
-        printf("6. Exit\n");
+        printf("\n===== HOSPITAL SCHEDULING MENU =====\n");
+        printf("1. Add Surgery\n");
+        printf("2. Delete Surgery\n");
+        printf("3. Update Surgery\n");
+        printf("4. Search Surgery\n");
+        printf("5. Display Surgeries\n");
+        printf("6. Add Dependency (Edge)\n");
+        printf("7. Show Graph\n");
+        printf("8. Get Schedule (Topological Sort)\n");
+        printf("9. Exit\n");
 
         printf("Enter choice: ");
         scanf("%d", &choice);
 
         switch (choice) {
-            case 1: addStudent(); break;
-            case 2: deleteStudent(); break;
-            case 3: updateStudent(); break;
+            case 1: addSurgery(); break;
+            case 2: deleteSurgery(); break;
+            case 3: updateSurgery(); break;
             case 4: {
                 int id;
-                printf("Enter ID to search: ");
+                printf("Enter ID: ");
                 scanf("%d", &id);
-                struct Student* s = searchStudent(id);
+                Surgery* s = searchSurgery(id);
                 if (s)
-                    printf("Found: %s (Marks: %.2f)\n", s->name, s->marks);
+                    printf("Found: %s (%d mins)\n", s->name, s->duration);
                 else
                     printf("❌ Not found\n");
                 break;
             }
-            case 5: displayStudents(); break;
-            case 6: printf("Exiting...\n"); break;
-            default: printf("Invalid choice!\n");
+            case 5: displaySurgeries(); break;
+            case 6: addDependency(); break;
+            case 7: displayGraph(); break;
+            case 8: topologicalSort(); break;
+            case 9: printf("Exiting...\n"); break;
+            default: printf("Invalid choice\n");
         }
 
-    } while (choice != 6);
+    } while (choice != 9);
 }
 
 // MAIN
