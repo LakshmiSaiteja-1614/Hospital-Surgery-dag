@@ -64,7 +64,7 @@ gcc main.c -o project
 
 ## 🧾 Sample Output
 **🧾 Sample Run 1 – Adding Surgeries**
-
+<p>
 <img width="354" height="205" alt="image" src="https://github.com/user-attachments/assets/34f1d5ba-2b6b-465d-929d-6663646840ff" /> 
 
 <img width="328" height="106" alt="Screenshot 2026-04-04 at 8 56 12 PM" src="https://github.com/user-attachments/assets/46988850-4bf3-419c-9bc1-6354b2d3218e" />
@@ -72,7 +72,7 @@ gcc main.c -o project
 <img width="328" height="106" alt="Screenshot 2026-04-04 at 8 56 12 PM" src="https://github.com/user-attachments/assets/2ec78b5a-a75d-412c-9e23-e65f7d8f27cb" />
 
 <img width="328" height="106" alt="Screenshot 2026-04-04 at 8 56 12 PM" src="https://github.com/user-attachments/assets/d9f0704d-eb66-47ac-af20-c9fbda1c33ee" />
-
+</P>
 
 **🧾 Sample Run 2 – Display Surgeries**
 
@@ -80,11 +80,11 @@ gcc main.c -o project
 
   
 **🧾 Sample Run 3 – Add Dependencies (DAG)**
-
+<div style="display:flex;gap:10px;">
 <img width="306" height="86" alt="Screenshot 2026-04-04 at 9 03 21 PM" src="https://github.com/user-attachments/assets/18b989d8-9954-47fe-8b5f-1baf01577470" />
 
 <img width="337" height="81" alt="Screenshot 2026-04-04 at 9 05 00 PM" src="https://github.com/user-attachments/assets/d5894e0b-c9bd-4b16-a3e6-f789c967a7a9" />
-
+</div>
 
 **🧾 Sample Run 4 – Display Graph (Adjacency Matrix)**
 
